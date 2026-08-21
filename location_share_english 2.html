@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Location Sharing</title>
+<style>
+body{font-family:Arial,sans-serif;text-align:center;padding:45px 20px;background:#f5f5f5}
+.box{max-width:520px;margin:auto;background:white;padding:30px;border-radius:18px;box-shadow:0 5px 25px #0001}
+button{padding:14px 24px;border:0;border-radius:10px;background:#1677ff;color:white;font-size:17px;cursor:pointer}
+#result{margin-top:20px;line-height:1.8;word-break:break-word}
+a{color:#1677ff}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>📍 Share Your Location</h2>
+<p>If you want to share your current location, tap the button below and select <b>Allow</b> when your browser asks for permission.</p>
+<button onclick="getLocation()">📍 Share Location</button>
+<div id="result"></div>
+</div>
+
+<script>
+function getLocation(){
+ const r=document.getElementById('result');
+ if(!navigator.geolocation){
+   r.innerHTML='This browser does not support location services.';
+   return;
+ }
+ r.innerHTML='⏳ Waiting for location permission...';
+ navigator.geolocation.getCurrentPosition(
+   p=>{
+     const lat=p.coords.latitude, lon=p.coords.longitude;
+     const acc=Math.round(p.coords.accuracy);
+     const map=`https://www.google.com/maps?q=${lat},${lon}`;
+     r.innerHTML=`✅ Location received.<br>Latitude: ${lat}<br>Longitude: ${lon}<br>Approximate accuracy: ${acc} meters<br><br><a href="${map}" target="_blank">Open Location in Google Maps</a>`;
+   },
+   e=>{
+     r.innerHTML='❌ Location was not received. Please allow location access in your browser.';
+   },
+   {enableHighAccuracy:true,timeout:10000,maximumAge:0}
+ );
+}
+</script>
+</body>
+</html>
